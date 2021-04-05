@@ -39,6 +39,7 @@ section .text
 
 ; int32_t intCmp(int32_t* a, int32_t* b)
 intCmp:
+    
 ret
 
 ; int32_t* intClone(int32_t* a)
