@@ -33,22 +33,63 @@ global cardAddStacked
 global cardDelete
 global cardPrint
 
+
 section .text
+extern malloc
+extern free
 
 ; ** Int **
 
 ; int32_t intCmp(int32_t* a, int32_t* b)
 intCmp:
-    
-ret
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 32
+    PUSH RBX
+
+    MOV EBX, [EDI]
+    CMP EBX, [ESI]
+    JZ cero
+    JG menosUno
+    MOV EAX, 1
+    JMP fin
+    cero:
+        MOV EAX, 0
+        JMP fin
+    menosUno:
+        MOV EAX, -1
+    fin:
+        
+    POP RBX
+    ADD RSP, 32
+    POP RBP
+    ret
+
+
 
 ; int32_t* intClone(int32_t* a)
 intClone:
+    PUSH RBP
+    MOV RBP, RSP
+
+    mov rbx, rdi
+    mov rdi, 4
+    call malloc
+
+    mov [rax], rbx
+
+    POP RBP
 ret
 
 ; void intDelete(int32_t* a)
 intDelete:
-ret
+    push RBP
+    MOV RBP, RSP
+
+    call free
+
+    POP RBP
+    ret
 
 ; void intPrint(int32_t* a, FILE* pFile)
 intPrint:
