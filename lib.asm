@@ -37,7 +37,7 @@ global cardPrint
 section .text
 extern malloc
 extern free
-
+extern fprintf
 ; ** Int **
 
 ; int32_t intCmp(int32_t* a, int32_t* b)
@@ -71,13 +71,16 @@ intCmp:
 intClone:
     PUSH RBP
     MOV RBP, RSP
+    SUB RSP, 24
+    PUSH RBX
 
-    mov rbx, rdi
+    mov ebx, [RDI]
     mov rdi, 4
     call malloc
+    mov [rax], ebx
 
-    mov [rax], rbx
-
+    POP RBX
+    ADD RSP, 24
     POP RBP
 ret
 
@@ -93,6 +96,19 @@ intDelete:
 
 ; void intPrint(int32_t* a, FILE* pFile)
 intPrint:
+    PUSH RBP
+    MOV RBP, RSP
+    SUB RSP, 24
+    PUSH RBX
+
+    MOV RBX, RDI ; GUARDO a en RBX
+    MOV RDI, RSI ; guardo pFile en rdi para pasarlo como parametro
+    MOV RSI, [RBX]; el valor apuntado de a en rsi
+    call fprintf; a va a estar en RDI y pfile en RSI
+
+    POP RBX
+    ADD RSP, 24
+    POP RBP
 ret
 
 ; ** String **
