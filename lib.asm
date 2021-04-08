@@ -129,10 +129,11 @@ strClone:
     push rbx
     ;a en rdi
 
-    mov rsi, rdi
+    mov r10, rdi
 
-    call strLen
+    call strLen ; devuelve en rax la longitud
 
+    mov rsi, r10
     mov rcx, rax
 
     mov rdi, rcx
@@ -142,17 +143,16 @@ strClone:
     ;en rcx está la longitud
     ;en rsi está el puntero al inicio de la string a copiar
     mov rbx, 0
-    dec rcx
 .ciclo:
     cmp rcx, rbx
     JE .fin
-    lea rsi, [rsi+rbx]
-    lea rdi, [rax+rbx]
-    movsb
-    inc rbx
-    jmp .ciclo
+    lea rsi, [rsi + rbx]
+    lea rdi, [rax + rbx]
+    rep movsb
+
+
+
 .fin:
-    mov rax, rdi
     pop rbx
     pop rbp
     ret
