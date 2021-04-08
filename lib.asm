@@ -126,39 +126,34 @@ strCmp:
 strClone:
     push rbp
     mov rbp, rsp  
+    push rbx
+    ;a en rdi
 
-    ;el puntero al inicio de la cadena -> rdi
-    MOV rcx, 0
-    
-_ciclo:
-    CMP byte [rdi + rcx], 48d
-    JZ _terminoCadena
-    INC rcx
-    JMP _ciclo
+    mov rsi, rdi
 
-_terminoCadena:
-    CMP ecx, 0
-    JZ _fin
+    call strLen
 
-    mov rdi, ecx
+    mov rcx, rax
+
+    mov rdi, rcx
     call malloc
-    MOV RBX, 0
-    
-_copiar:
-    CMP ecx, rbx
-    JLE _fin
-    MOV r10, 0
-    MOV r11, 0
-    lea r10, [rax+rbx]
-    lea r11, [rsi+rbx]
-    cld
-    mov rdi, r10
-    mov rsi, r11
-    rep MOVSB
-    INC rbx
-    JMP _copiar
 
-_fin:
+    ;en rax tenemos el puntero a la nueva memoria creada
+    ;en rcx está la longitud
+    ;en rsi está el puntero al inicio de la string a copiar
+    mov rbx, 0
+    dec rcx
+.ciclo:
+    cmp rcx, rbx
+    JE .fin
+    lea rsi, [rsi+rbx]
+    lea rdi, [rax+rbx]
+    movsb
+    inc rbx
+    jmp .ciclo
+.fin:
+    mov rax, rdi
+    pop rbx
     pop rbp
     ret
 
@@ -176,7 +171,23 @@ ret
 
 ; uint32_t strLen(char* a)
 strLen:
-ret
+    PUSH RBP
+    MOV RBP , RSP
+    ;a en rdi
+    MOV RCX, 0
+.comp:
+    CMP byte [RDI+RCX], 0
+    JE .fin
+    
+    inc RCX
+    jmp .comp
+
+.fin:
+    mov rax, rcx
+    POP RBP
+    ret
+
+
 
 ; ** Array **
 

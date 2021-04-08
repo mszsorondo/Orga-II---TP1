@@ -5,11 +5,7 @@
 #include <assert.h>
 #include <math.h>
 #include "lib.h"
-extern int32_t intCmp(int32_t* a, int32_t* b);
-extern int32_t* intClone(int32_t* a);
-extern void intDelete(int32_t* a);
-extern void intPrint(int32_t* a, FILE* pFile);
-extern char* strClone(char* a);
+
 
 
 
@@ -37,8 +33,6 @@ void test_strClone()
     char* resultado = strClone(test);
 
     printf("El resultado de la copia de string es: %s\n", resultado);
-
-    strDelete(resultado);
 
 
 }
