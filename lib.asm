@@ -34,6 +34,9 @@ global cardDelete
 global cardPrint
 
 
+section .data
+formato: db '%d', 10, 0
+
 section .text
 extern malloc
 extern free
@@ -98,18 +101,18 @@ intDelete:
 intPrint:
     PUSH RBP
     MOV RBP, RSP
-    SUB RSP, 24
-    PUSH RBX
+    
+    ;a en rdi
+    ;pfile en rsi
 
-    MOV RBX, RDI ; GUARDO a en RBX
-    MOV RDI, RSI ; guardo pFile en rdi para pasarlo como parametro
-    MOV RSI, [RBX]; el valor apuntado de a en rsi
-    call fprintf; a va a estar en RDI y pfile en RSI
+    mov edx, [rdi]
+    mov rdi, rsi
+    mov rsi, formato
+    call fprintf
 
-    POP RBX
-    ADD RSP, 24
+
     POP RBP
-ret
+    RET
 
 ; ** String **
 
@@ -119,7 +122,15 @@ ret
 
 ; char* strClone(char* a)
 strClone:
-ret
+    push rbp
+    mov rbp, rsp
+
+    ;a en rdi
+    
+    
+    
+
+    ret
 
 ; void strDelete(char* a)
 strDelete:

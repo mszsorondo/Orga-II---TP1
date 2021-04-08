@@ -9,6 +9,8 @@ extern int32_t intCmp(int32_t* a, int32_t* b);
 extern int32_t* intClone(int32_t* a);
 extern void intDelete(int32_t* a);
 extern void intPrint(int32_t* a, FILE* pFile);
+extern char* strClone(char* a);
+
 
 
 void test_intClone();
@@ -18,14 +20,28 @@ void test_intPrint();
 int main (void)
 {  
     
-    //--------a corregir-----------
-    test_intPrint(); //Address 0x4e5304000000020 is not stack'd, malloc'd or (recently) free'd
-    //-----------------------------
-    test_intCmp();//agregar tests nuestros si pinta
-    test_intClone();//         same
+    test_strClone();
+
+
+    /*test_intPrint();
+    test_intCmp();
+    test_intClone();*/
     return 0;
 }
 
+
+void test_strClone()
+{
+    char* test = "Testing";
+
+    char* resultado = strClone(test);
+
+    printf("%s\n", resultado);
+
+    free(resultado);
+
+
+}
 
 void test_intClone(){
     int32_t a = 4;
@@ -71,9 +87,9 @@ void test_intCmp(){
 
 
 void test_intPrint(){
-    
-    FILE *fail = fopen("prueba_intPrint.txt", "a");
+    FILE* pFile = fopen("prueba_intPrint.txt", "a+");
     int32_t a = 32;
-    intPrint(&a, fail);
+    intPrint(&a, pFile);
 
+    fclose(pFile);
 }
