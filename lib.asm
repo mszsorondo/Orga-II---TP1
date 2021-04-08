@@ -118,22 +118,56 @@ intPrint:
 
 ; int32_t strCmp(char* a, char* b)
 strCmp:
-ret
+    push rbp
+    mov rbp, rsp
+    ret
 
 ; char* strClone(char* a)
 strClone:
     push rbp
-    mov rbp, rsp
+    mov rbp, rsp  
 
-    ;a en rdi
+    ;el puntero al inicio de la cadena -> rdi
+    MOV rcx, 0
     
-    
-    
+_ciclo:
+    CMP byte [rdi + rcx], 48d
+    JZ _terminoCadena
+    INC rcx
+    JMP _ciclo
 
+_terminoCadena:
+    CMP ecx, 0
+    JZ _fin
+
+    mov rdi, ecx
+    call malloc
+    MOV RBX, 0
+    
+_copiar:
+    CMP ecx, rbx
+    JLE _fin
+    MOV r10, 0
+    MOV r11, 0
+    lea r10, [rax+rbx]
+    lea r11, [rsi+rbx]
+    cld
+    mov rdi, r10
+    mov rsi, r11
+    rep MOVSB
+    INC rbx
+    JMP _copiar
+
+_fin:
+    pop rbp
     ret
 
 ; void strDelete(char* a)
 strDelete:
+push rbp
+mov rbp, rsp
+call free
+pop rbp
 ret
 
 ; void strPrint(char* a, FILE* pFile)

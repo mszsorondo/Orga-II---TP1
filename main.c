@@ -32,13 +32,13 @@ int main (void)
 
 void test_strClone()
 {
-    char* test = "Testing";
+    char* test = "ASDdasd";
 
     char* resultado = strClone(test);
 
-    printf("%s\n", resultado);
+    printf("El resultado de la copia de string es: %s\n", resultado);
 
-    free(resultado);
+    strDelete(resultado);
 
 
 }
