@@ -36,6 +36,7 @@ global cardPrint
 
 section .data
 formato: db '%d', 10, 0
+formato_2: db '%s', 10, 0
 
 section .text
 extern malloc
@@ -120,40 +121,39 @@ intPrint:
 strCmp:
     push rbp
     mov rbp, rsp
+
+    pop rbp
     ret
 
 ; char* strClone(char* a)
 strClone:
     push rbp
     mov rbp, rsp  
-    push rbx
     ;a en rdi
 
-    mov r10, rdi
+    mov rsi, rdi
 
     call strLen ; devuelve en rax la longitud
 
-    mov rsi, r10
-    mov rcx, rax
-
-    mov rdi, rcx
+    mov rdi, rax
+    inc rdi
     call malloc
 
     ;en rax tenemos el puntero a la nueva memoria creada
     ;en rcx está la longitud
     ;en rsi está el puntero al inicio de la string a copiar
-    mov rbx, 0
-.ciclo:
-    cmp rcx, rbx
-    JE .fin
-    lea rsi, [rsi + rbx]
-    lea rdi, [rax + rbx]
-    rep movsb
 
+    mov rcx, 0
+
+.ciclo:
+    mov dl, [rsi+rcx]
+    mov [rax+rcx], dl
+    inc rcx
+    cmp dl, 0
+    jne .ciclo
 
 
 .fin:
-    pop rbx
     pop rbp
     ret
 
@@ -167,6 +167,16 @@ ret
 
 ; void strPrint(char* a, FILE* pFile)
 strPrint:
+    PUSH RBP
+    MOV RBP, RSP
+    ;a esta en rdi, pfile en rsi
+
+    mov rdx, rdi
+    mov rdi, rsi
+    mov rsi, formato_2 
+    call fprintf
+
+    POP RBP
 ret
 
 ; uint32_t strLen(char* a)

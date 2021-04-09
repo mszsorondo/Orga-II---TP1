@@ -15,16 +15,24 @@ void test_intPrint();
 
 int main (void)
 {  
+    //test_strClone();
+
+    char* a = "abc";
+    char* b = "ab";
+
+    bool test = CstrCmp(a,b);
+
+    printf("El resultado de la comparación fueE: %d \n", test);
     
-    test_strClone();
-
-
     /*test_intPrint();
     test_intCmp();
     test_intClone();*/
     return 0;
 }
 
+void test_strPrint(){
+    
+}
 
 void test_strClone()
 {
@@ -34,6 +42,7 @@ void test_strClone()
 
     printf("El resultado de la copia de string es: %s\n", resultado);
 
+    strDelete(resultado);
 
 }
 
@@ -86,4 +95,31 @@ void test_intPrint(){
     intPrint(&a, pFile);
 
     fclose(pFile);
+}
+
+int32_t CstrCmp(char* a, char*b){
+
+
+    uint32_t aSize = strLen(a);
+    uint32_t bSize = strLen(b);
+
+    uint32_t min = 0;
+
+    if(aSize < bSize)
+        min = aSize;
+    else
+        min = bSize;
+    for(int i = 0; i < min; i++)
+    {
+        if(a[i] > b[i])
+            return -1;
+        else if(a[i] < b[i])
+            return 1;
+    }
+    if (aSize>bSize)
+        return -1;
+    else if(aSize<bSize)
+        return 1;
+
+    return 0;
 }
