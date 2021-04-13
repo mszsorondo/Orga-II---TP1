@@ -75,16 +75,16 @@ intCmp:
 intClone:
     PUSH RBP
     MOV RBP, RSP
-    SUB RSP, 24
+    SUB RSP, 8
     PUSH RBX
 
-    mov ebx, [RDI]
+    mov rbx, [RDI]
     mov rdi, 4
     call malloc
-    mov [rax], ebx
+    mov [rax], rbx
 
     POP RBX
-    ADD RSP, 24
+    ADD RSP, 8
     POP RBP
 ret
 
@@ -119,9 +119,68 @@ intPrint:
 
 ; int32_t strCmp(char* a, char* b)
 strCmp:
-    push rbp
+   push rbp
     mov rbp, rsp
 
+    ;a en rdi
+    ;b en rsi
+
+    ;b entra en rsi, strLen calcula su longitud
+    call strLen
+
+    mov r11, rax ;guardamos la longitud de b en r11
+
+    mov r12, rsi ;guardamos rsi
+
+    mov rsi, rdi ;pasamos a a rsi para calcular su longitud
+
+    call strLen
+    mov r10, rax ;guardamos la longitud de a en r10
+
+    ;en este punto tenemos:
+    ;longitud de a en r10
+    ;longitud de b en r11
+    ;a* en rdi
+    ;b* en r12
+
+    mov rsi, r12
+    ;recuperamos b* a rsi
+
+    inc r10
+    inc r11
+    CMP r10, r11
+    JLE .minA
+    mov rcx, r11
+    mov rbx, 0
+.ciclo:
+    mov al, byte [rdi+rbx]
+    CMP al, byte [rsi+rbx]
+    JG .aEsMayor
+    JL .bEsMayor
+    inc rbx
+    CMP rcx, rbx
+    JG .ciclo
+
+    cmp r10, r11
+    JG .aEsMayor
+    JL .bEsMayor
+    mov RAX, 0
+    jmp .fin
+
+.aEsMayor:
+    MOV rax, -1
+    jmp .fin
+
+.bEsMayor:
+    mov rax, 1
+    jmp .fin
+
+.minA:
+    mov rcx, r10
+    mov rbx, 0
+    JMP .ciclo
+
+.fin:
     pop rbp
     ret
 
@@ -267,14 +326,54 @@ ret
 
 ; card_t* cardNew(char* suit, int32_t* number)
 cardNew:
-ret
+    PUSH RBP
+    MOV RBP, RSP 
+    ; R9, R10 SE CONSERVAN
+    ; en RDI esta el puntero a char
+    ; en RSI esta el puntero a number 
+    push r10
+    push r12
+    mov r10, rdi
+    mov r11, rsi
+
+    call strClone
+    mov r12, rax
+
+    mov rdi, r11
+    call intClone
+    mov r11, rax
+    
+
+    mov rdi, 24
+    call malloc
+
+    mov [rax], r12
+    mov [rax+8], r11
+    mov qword [rax+16], 0
+
+    pop r12
+    pop r10
+    POP RBP
+    RET
 
 ; char* cardGetSuit(card_t* c)
 cardGetSuit:
+    push RBP
+    mov rbp, rsp
+
+    mov rax, [rdi]
+
+    pop rbp
 ret
 
 ; int32_t* cardGetNumber(card_t* c) 
 cardGetNumber:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, [rdi+8]
+
+    pop rbp
 ret
 
 ; list_t* cardGetStacked(card_t* c)
@@ -295,7 +394,28 @@ ret
 
 ; void cardDelete(card_t* c)
 cardDelete:
+    PUSH RBP
+    MOV RBP, RSP
+    ;RDI PUNTERO A CARD
+
+    MOV RSI, RDI
+    MOV RDI, [RSI]
+    CALL free
+
+    
+    MOV RDI, [RSI+8]
+    CALL free
+
+
+    MOV RDI, RSI
+    CALL free
+
+
+    POP RBP
+
 ret
+
+
 
 ; void cardPrint(card_t* c, FILE* pFile)
 cardPrint:

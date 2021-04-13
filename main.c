@@ -12,17 +12,20 @@
 void test_intClone();
 void test_intCmp();
 void test_intPrint();
+void test_cardNew();
 
-int main (void)
-{  
+int main (void){  
     //test_strClone();
 
-    char* a = "abc";
+    /*char* a = "abc";
     char* b = "ab";
 
     bool test = CstrCmp(a,b);
 
-    printf("El resultado de la comparación fueE: %d \n", test);
+    printf("El resultado de la comparación fueE: %d \n", test);*/
+
+    test_cardNew();
+
     
     /*test_intPrint();
     test_intCmp();
@@ -30,13 +33,25 @@ int main (void)
     return 0;
 }
 
-void test_strPrint(){
-    
+void test_cardNew(){
+    char* suit1 = "espada";
+
+    int32_t num1 = 5;
+
+    card_t* carta1 = cardNew(suit1, &num1);
+
+    printf("El palo de la carta es: %s y el numero es: %d\n", cardGetSuit(carta1), *cardGetNumber(carta1));
+
+    cardDelete(carta1);
+
+    //cardDelete(carta1);
+    // resta imprimir el numero
+
 }
 
 void test_strClone()
 {
-    char* test = "ASDdasd";
+    char* test = "espada";
 
     char* resultado = strClone(test);
 
@@ -97,7 +112,7 @@ void test_intPrint(){
     fclose(pFile);
 }
 
-int32_t CstrCmp(char* a, char*b){
+/*int32_t CstrCmp(char* a, char*b){
 
 
     uint32_t aSize = strLen(a);
@@ -122,4 +137,4 @@ int32_t CstrCmp(char* a, char*b){
         return 1;
 
     return 0;
-}
+}*/
