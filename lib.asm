@@ -75,16 +75,16 @@ intCmp:
 intClone:
     PUSH RBP
     MOV RBP, RSP
-    SUB RSP, 8
+    SUB RSP, 24
     PUSH RBX
 
-    mov rbx, [RDI]
+    mov ebx, [RDI]
     mov rdi, 4
     call malloc
-    mov [rax], rbx
+    mov [rax], ebx
 
     POP RBX
-    ADD RSP, 8
+    ADD RSP, 24
     POP RBP
 ret
 
@@ -119,23 +119,26 @@ intPrint:
 
 ; int32_t strCmp(char* a, char* b)
 strCmp:
-   push rbp
+    push rbp
     mov rbp, rsp
-
+    push r12
+    push r13
+    push r14
+    push r15
     ;a en rdi
     ;b en rsi
 
     ;b entra en rsi, strLen calcula su longitud
     call strLen
 
-    mov r11, rax ;guardamos la longitud de b en r11
+    mov r12, rax ;guardamos la longitud de b en r11
 
-    mov r12, rsi ;guardamos rsi
+    mov r13, rsi ;guardamos rsi
 
     mov rsi, rdi ;pasamos a a rsi para calcular su longitud
 
     call strLen
-    mov r10, rax ;guardamos la longitud de a en r10
+    mov r14, rax ;guardamos la longitud de a en r10
 
     ;en este punto tenemos:
     ;longitud de a en r10
@@ -143,14 +146,14 @@ strCmp:
     ;a* en rdi
     ;b* en r12
 
-    mov rsi, r12
+    mov rsi, r13
     ;recuperamos b* a rsi
 
-    inc r10
-    inc r11
-    CMP r10, r11
+    inc r14
+    inc r12
+    CMP r14, r12
     JLE .minA
-    mov rcx, r11
+    mov rcx, r12
     mov rbx, 0
 .ciclo:
     mov al, byte [rdi+rbx]
@@ -161,7 +164,7 @@ strCmp:
     CMP rcx, rbx
     JG .ciclo
 
-    cmp r10, r11
+    cmp r14, r12
     JG .aEsMayor
     JL .bEsMayor
     mov RAX, 0
@@ -176,11 +179,15 @@ strCmp:
     jmp .fin
 
 .minA:
-    mov rcx, r10
+    mov rcx, r14
     mov rbx, 0
     JMP .ciclo
 
 .fin:
+    pop r15
+    pop r14
+    pop r13
+    pop r12
     pop rbp
     ret
 
@@ -292,15 +299,87 @@ ret
 
 ; list_t* listNew(type_t t)
 listNew:
+    push rbp
+    mov rbp, rsp
+    ;type en rdi
+    
+    sub rsp, 8
+    push rbx
+    
+    mov rbx, 0
+    mov ebx, edi; ebx guarda el tipo para mallocear
+    
+    mov rdi, 24
+    call malloc
+    ;en rax esta el puntero a list
+    mov dword [rax], ebx
+    mov dword [rax+4], 0
+    mov qword [rax+8], 0
+    mov qword [rax+16], 0
+
+    
+    pop RBX
+    add rsp, 8
+    pop rbp
 ret
 
 ; uint8_t  listGetSize(list_t* l)
 listGetSize:
+    push rbp
+    mov rbp, rsp
+
+    mov rax, 0
+    mov eax, dword [rdi + 4]
+
+
+    pop rbp
 ret
 
 ; void listAddFirst(list_t* l, void* data)
 listAddFirst:
-ret
+    push rbp
+    mov rbp, rsp
+    sub rsp, 8
+    push r12
+    push r13
+    push r14
+    ;me guardo el puntero a la lista y a data para que cuando llame a funciones no se modifiquen
+    mov r12, rdi
+    mov r13, rsi
+
+    ; asumo que se debe hacer una copia de data y no del valor al que apunta
+.s_listElem_create:
+    ; un nodo contiene tres punteros asique debo tener 24 bytes de memoria reservada
+    mov rdi, 24
+    call malloc
+    mov [rax], r13 ; muevo a los primeros 8 bits del nodo el puntero a data
+
+    mov rsi, [r12+8]
+    mov rdi, [rax+8]
+    movsq ; el siguiente del nuevo es el primero actual
+    mov qword [rax+16], 0
+; debo hacer que el anterior del primero sea el nodo recien creado
+.update_prev:
+    cmp dword [r12+4], 0
+    jne .noEstabaVacia 
+    mov [r12+16], rax ; si estaba vacia entonces el ultimo nodo de la lista tambien sera el nuevo
+    jmp .actualizarPrimero
+
+.noEstabaVacia:
+; el primer elemento es apuntado por el offset 8 de la lista, cuyo inicio apuntado por r12
+    mov r14, [r12+8] ; tengo en r14 la direccion del viejo primer nodo
+    mov [r14+16], rax; el proximo del viejo primer nodo sera la dir del nuevo
+.actualizarPrimero:
+    mov [r12+8], rax ; en rax tenemos el inicio del nuevo nodo
+    
+
+
+    add rsp, 8
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
+    ret
 
 ; void* listGet(list_t* l, uint8_t i)
 listGet:
@@ -327,53 +406,57 @@ ret
 ; card_t* cardNew(char* suit, int32_t* number)
 cardNew:
     PUSH RBP
-    MOV RBP, RSP 
+    MOV RBP, RSP
     ; R9, R10 SE CONSERVAN
     ; en RDI esta el puntero a char
-    ; en RSI esta el puntero a number 
-    push r10
+    ; en RSI esta el puntero a number
     push r12
-    mov r10, rdi
-    mov r11, rsi
+    push r13
+    push r14
+    push r15
+    mov r12, rdi
+    mov r13, rsi
 
     call strClone
-    mov r12, rax
+    mov r14, rax
 
-    mov rdi, r11
+    mov rdi, r13
     call intClone
-    mov r11, rax
-    
+    mov r15, rax
+
 
     mov rdi, 24
     call malloc
 
-    mov [rax], r12
-    mov [rax+8], r11
+    mov [rax], r14
+    mov [rax+8], r15
     mov qword [rax+16], 0
 
+    pop r15
+    pop r14
+    pop r13
     pop r12
-    pop r10
     POP RBP
     RET
 
 ; char* cardGetSuit(card_t* c)
 cardGetSuit:
-    push RBP
-    mov rbp, rsp
+push rbp
+mov rbp, rsp
 
-    mov rax, [rdi]
+mov rax, [rdi]
 
-    pop rbp
+pop rbp
 ret
 
 ; int32_t* cardGetNumber(card_t* c) 
 cardGetNumber:
-    push rbp
-    mov rbp, rsp
+push rbp
+mov rbp, rsp
 
-    mov rax, [rdi+8]
+mov rax, [rdi+8]
 
-    pop rbp
+pop rbp
 ret
 
 ; list_t* cardGetStacked(card_t* c)
@@ -382,6 +465,31 @@ ret
 
 ; int32_t cardCmp(card_t* a, card_t* b)
 cardCmp:
+push rbp
+mov rbp, rsp
+push r12
+push r13
+;a en rdi
+;b en rsi
+
+mov r12, rdi
+mov r13, rsi
+
+mov rdi, [rdi]
+mov rsi, [rsi]
+call strCmp
+
+cmp rax, 0
+JNE .fin
+
+mov rdi, [r12+8]
+mov rsi, [r13+8]
+call intCmp
+
+.fin:
+pop r13
+pop r12
+pop rbp
 ret
 
 ; card_t* cardClone(card_t* c)
@@ -394,7 +502,7 @@ ret
 
 ; void cardDelete(card_t* c)
 cardDelete:
-    PUSH RBP
+PUSH RBP
     MOV RBP, RSP
     ;RDI PUNTERO A CARD
 
@@ -414,8 +522,6 @@ cardDelete:
     POP RBP
 
 ret
-
-
 
 ; void cardPrint(card_t* c, FILE* pFile)
 cardPrint:
