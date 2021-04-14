@@ -29,20 +29,32 @@ int main (void){
 
     //test_cardNew();
     //test_cardCmp();
-    test_listNew_typeTest();
     
+    
+    //test_listNew_typeTest();
+    test_listGetSize();
+
+
     /*test_intPrint();
     test_intCmp();
     test_intClone();*/
     return 0;
 }
 
+void test_listGetSize(){
+    type_t tipo = 2; 
+    
+    list_t* lista1 = listNew(tipo);
+
+    printf("La lista es de tipo %x \n", lista1->size); //fefff8c8 con tipo 0 4e53040 con tipo 2
+ 
+}
 void test_listNew_typeTest(){
     type_t tipo = 2; 
     
     list_t* lista1 = listNew(tipo);
 
-    printf("La lista es de tipo %x \n", *lista1); //fefff8c8 con tipo 0 4e53040 con tipo 2
+    printf("\n La lista es de tipo %x \n", lista1->type); //fefff8c8 con tipo 0 4e53040 con tipo 2
 }
 
 void test_cardNew(){

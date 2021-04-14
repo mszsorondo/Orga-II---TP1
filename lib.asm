@@ -347,6 +347,8 @@ listAddFirst:
     mov r12, rdi
     mov r13, rsi
 
+    ;FALTA CLONAR EL DATO! EL CLONADO ES EL QUE SE METE EN LA LISTA
+
     ; asumo que se debe hacer una copia de data y no del valor al que apunta
 .s_listElem_create:
     ; un nodo contiene tres punteros asique debo tener 24 bytes de memoria reservada
@@ -371,8 +373,10 @@ listAddFirst:
     mov [r14+16], rax; el proximo del viejo primer nodo sera la dir del nuevo
 .actualizarPrimero:
     mov [r12+8], rax ; en rax tenemos el inicio del nuevo nodo
-    
 
+    ;CREO QUE FALTA ALGO
+.fin:
+    mov rax, 
 
     add rsp, 8
     pop r14
