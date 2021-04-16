@@ -46,9 +46,35 @@ void  arrayPrint(array_t* a, FILE* pFile) {
 /** Lista **/
 
 void listAddLast(list_t* l, void* data){
+    funcClone_t* clonar = getCloneFunction(l->type);
+    void* clonedData = clonar(data);
+
+    listElem_t* nuevoNodo = (listElem_t*) malloc(24);
+
+    if(l->size == 0){
+        l->first = nuevoNodo;
+        l->last = nuevoNodo;
+        nuevoNodo->next = NULL;
+        nuevoNodo->prev = NULL;
+    } else{
+        nuevoNodo->prev = l->last;
+        nuevoNodo->next = NULL;
+        l->last->next = nuevoNodo;
+    }
+    nuevoNodo->data = clonedData;
+    l->last = nuevoNodo;
+    l->size++;
 }
 
 void listPrint(list_t* l, FILE* pFile) {
+    funcPrint_t* printear = getPrintFunction(l->type);
+    fprintf(pFile, "[");
+    for(int i = 0; i < l->size; i++){
+        printear(listGet(l, i), pFile);
+        if(i != (l->size-1))
+            fprintf(pFile, ", ");
+    }
+    fprintf(pFile, "]");
 }
 
 

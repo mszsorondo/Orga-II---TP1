@@ -34,8 +34,8 @@ global cardDelete
 global cardPrint
 
 section .data
-formato: db '%d', 10, 0
-formato_2: db '%s', 10, 0
+formato: db '%d', 0
+formato_2: db '%s', 0
 
 section .text
 extern malloc
@@ -52,8 +52,8 @@ intCmp:
     SUB RSP, 32
     PUSH RBX
 
-    MOV EBX, [EDI]
-    CMP EBX, [ESI]
+    MOV EBX, [RDI]
+    CMP EBX, [RSI]
     JZ cero
     JG menosUno
     MOV EAX, 1
@@ -412,7 +412,6 @@ mov r9d, dword [rdi+4]
 
 cmp rsi, r9
 JGE .finInvalido
-mov rax, 0
 
 mov rcx, 0 
 mov rax, [rdi+8]
@@ -429,7 +428,7 @@ mov rax, [rdi+8]
     mov rax, 0
     jmp .fin
 .fin:
-
+mov rax, [rax]
 pop rbp
 ret
 
@@ -437,106 +436,126 @@ ret
 listRemove:
 push rbp
 mov rbp, rsp
-sub rsp,8
-push r15
-push r14
-push r13
-push r12
-push rbx
 
-mov r15, rdi
-mov r14, rsi
-call listGet
+;list en rdi
+;i en rsi
+mov r12, rdi
+mov r13, rsi
 
-; si esta fuera, saltar al fin y delvolver cero
-cmp dword [r15+4], r14d
-JLE .fin
+call listGetAux
+mov r14, rax
 
-;si es el ultimo, actualizar solo .siguienteDelAnterior -> deletear actual
-mov r10d, dword [r15+4]
-dec r10d
-cmp r10d, r14d
-JE .esElUltimo; DEBUGGEAR!!!!
+cmp rax, 0
+JE .fin
 
-;si es el primero, actualizar solo .anteriorDelsiguiente -> deletear actual
-cmp r14, 0
-JE .esElprimero
-;sino, hacer ambos -> deletear actual
+cmp r13, byte 0
+JE .iEsElPrimero
 
-; si pasas por aca, es porque no es ni el primero ni el ultimo y esta dentro
-mov r11, 2
-jmp .siguienteDelAnterior
+mov r15, qword 0
+mov r15b, byte [r12+4]
+dec r15b
+cmp r15b, r13b
+JE .iEsElUltimo
 
+.iEsIntermedio:
+	mov r8, r13
+	dec r8 				;obtengo el i anterior al que me piden
 
-.esElprimero:
-mov r11, 1
-jmp .anteriorDelSiguiente
+	mov rdi, r12		;paso la lista
+	mov rsi, r8			;paso el i del elemento anterior al que hay q borrar
+	call listGetAux
+	mov r15, rax     	;guardo en r9 el nodo anterior al que hay que borrar
 
-.esElUltimo:
-mov r11, 0
+	mov rdi, r12		;vuelvo a pasar la lista
+	ADD r8, 2			;ahora r8 vale el i sigueinte al nodo que hay q borrar
+	mov rsi, r8			;paso el i q corresponde al elemento sigueinte al que debe ser borrado
+	call listGetAux
+	mov rbx, rax
 
-.siguienteDelAnterior:
-mov r8, [rax+8]; siguiente
-mov r9, [rax+16]; anterior
-mov rsi, r8; el siguiente
-lea rdi, [r9+8]
-movsq
-cmp r11, 0
-je .fin
+	mov [r15+8], rbx		;al nodo anterior, le seteo el puntero a next = al nodo siguiente
+	mov [rbx+16], r15	;al nodo sigueinte, le seteo el puntero a prev = al nodo anterior
+	jmp .final
 
-.anteriorDelSiguiente:
-mov r8, [rax+16]; anterior
-mov r9, [rax+8]; siguiente
-lea rdi, [r9+16]
-mov rsi, r8
-movsq
+.iEsElPrimero:			;si i es el primero, al siguiente del primero tengo que apuntar el puntero prev a 0 
+	mov r8, r13			;ademas, hay que setear como primer elemento de la lista al siguiente del primero
+	inc r8
+	mov rdi, r12		
+	mov rsi, r8
+	call listGetAux
+	mov rbx, rax
+
+	mov qword [rbx+16], 0 ;apuntamos a 0 el prev del nuevo primero		
+	mov [r12+8], rbx		;el primero de la lista ahora es rax
+	jmp .final
+
+.iEsElUltimo:
+	mov r8, r15
+	dec r8				;r8 apunta al anterior del ultimo
+	mov rdi, r12
+	mov rsi, r8
+	call listGetAux 		;en rax está el anterior del ultimo
+	mov rbx, rax
+
+	mov qword [rbx+8], 0 ;el siguiente del nuevo ultimo apunta a 0
+	mov [r12+16], rbx
+	jmp .final
+
+.final:
+dec byte [r12+4]
+
+mov r15, [r14]
+
+mov rdi, r14
+call free
+
+mov rax, r15
 
 .fin:
-.deletearActual:
-mov rdi, rax 
-mov rbx, [rdi]; en rbx guardo puntero data
-call free
-mov rax, rbx
-
-pop rbx
-pop r12
-pop r13
-pop r14
-pop r15
-add rsp, 8
 pop rbp
 ret
 
 ; void  listSwap(list_t* l, uint8_t i, uint8_t j)
 listSwap:
-    push rbp
-    mov rbp, rsp
+push rbp
+mov rbp, rsp
 
-.checkRange:
-    cmp esi, dword [rdi+4]
-    JGE .fin
-    cmp edx, dword [rdi+4]
-    JGE .fin
+mov r12, rdi
+mov r13, rsi
+mov r14, rdx
 
-    mov r15, rdi; para preservar la lista
-    mov r14, rdx; para preservar j
+mov r15, qword 0
+mov r15b, byte [rdi+4]
+dec r15b
 
-    call listGet
-    ;tengo en rax el i-esimo elemento
-    mov rbx, rax ; lo paso a rbx
-    mov rsi, r14
-    mov rdi, r15 ;recupero la lista en rdi
+cmp r15b, r13b
+jl .fin
 
-    call listGet
-    ; tengo en rax el j-esimo elemento
-    mov r8, rax; a esta altura tengo en rbx el iesimo y en r8 el jesimo 
+cmp r15b, r14b
+jl .fin
 
-    ;COMPLETAR...
+
+call listGetAux
+mov r13, rax
+
+mov rdi, r12
+mov rsi, rdx
+call listGetAux
+mov r14, rax
+
+;en r13 está el iesimo
+;en r14 está el jesimo
+mov r9, [r14]
+
+mov r15, [r13]
+mov [r14], r15
+
+mov r15, r9
+mov [r13], r15
 
 
 .fin:        
 
-    pop rbp
+pop rbp
 ret
 
 ; list_t* listClone(list_t* l)
@@ -705,4 +724,40 @@ ret
 
 ; void cardPrint(card_t* c, FILE* pFile)
 cardPrint:
+ret
+
+
+
+;auxiliares
+listGetAux:
+; rdi -> lista
+; rsi = i > rsi>= [rdi+4]? > si es asi devolver cero en rax, sino...
+;pedir i veces el next
+
+; setear rcx a cero > setear un iterador en [rdi+8] > cmp rcx con i > 
+push rbp
+mov rbp, rsp
+
+mov r9,0
+mov r9d, dword [rdi+4]
+
+cmp rsi, r9
+JGE .finInvalido
+
+mov rcx, 0 
+mov rax, [rdi+8]
+.ciclo:
+    cmp rcx, rsi
+    JE .fin
+    mov rax, [rax+8]
+    inc rcx
+    jmp .ciclo
+
+
+
+.finInvalido:
+    mov rax, 0
+    jmp .fin
+.fin:
+pop rbp
 ret

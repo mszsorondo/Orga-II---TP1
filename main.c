@@ -16,6 +16,9 @@ void test_cardNew();
 void test_strCmp();
 void test_cardCmpASuitGreaterEqualNum();
 void test_listNew();
+void listAddLast(list_t* l, void*data);
+
+
 int main (void){  
     //test_strClone();
     //test_strCmp();
@@ -34,7 +37,11 @@ int main (void){
     
     //test_listGet();
 
-    test_listRemove();
+    //test_listRemove();
+
+    //test_listSwap();
+
+    test_listPrint();
 
     //test_listNew_typeTest();
     //test_listGetSize();
@@ -44,6 +51,80 @@ int main (void){
     test_intCmp();
     test_intClone();*/
     return 0;
+}
+
+void test_listPrint(){
+    FILE* pFile = fopen("prueba_listPrint.txt", "a+");
+    int32_t numA = 36;
+    list_t* listaA = listNew(1);
+    listAddFirst(listaA, &numA);
+
+    int32_t numB = 4;
+    listAddFirst(listaA, &numB);
+
+    int32_t numC = 299;
+    listAddFirst(listaA, &numC);
+
+    int32_t numX = 349;
+    listAddFirst(listaA, &numX);
+
+    int32_t numD = 292;
+    listAddFirst(listaA, &numD);
+
+    int32_t numE = 290;
+    listAddFirst(listaA, &numE);
+
+    listPrint(listaA, pFile);
+
+    listDelete(listaA);
+
+    fclose(pFile);
+}
+
+void test_listSwap(){
+    int32_t numA = 36;
+    list_t* listaA = listNew(1);
+    listAddFirst(listaA, &numA);
+
+    int32_t numB = 4;
+    listAddFirst(listaA, &numB);
+
+    int32_t numC = 299;
+    listAddFirst(listaA, &numC);
+
+    int32_t numX = 349;
+    listAddFirst(listaA, &numX);
+
+    int32_t numD = 292;
+    listAddFirst(listaA, &numD);
+
+    int32_t numE = 290;
+    listAddFirst(listaA, &numE);
+
+    for(int i = 0; i < listaA->size; i++){
+        printf("%d ",*(int*)listGet(listaA, i) );
+    }
+    printf("\n");
+
+    listSwap(listaA, 5, 0);
+
+    for(int i = 0; i < listaA->size; i++){
+        printf("%d ",*(int*)listGet(listaA, i) );
+    }
+    printf("\n");
+
+    int32_t numQ = 999;
+
+    listAddLast(listaA, &numQ);
+
+    for(int i = 0; i < listaA->size; i++){
+        printf("%d ",*(int*)listGet(listaA, i) );
+    }
+    printf("\n");
+
+    listDelete(listaA);
+
+
 }
 
 void test_listRemove(){
@@ -57,15 +138,28 @@ void test_listRemove(){
     int32_t numC = 299;
     listAddFirst(listaA, &numC);
 
-    int* removed = listRemove(listaA, 1);
+    int32_t numX = 349;
+    listAddFirst(listaA, &numX);
 
-    printf("El valor del elemento removido es: %d \n", *(int*)removed);
+    int32_t numD = 292;
+    listAddFirst(listaA, &numD);
 
-    removed = listRemove(listaA, 1);
+    int32_t numE = 290;
+    listAddFirst(listaA, &numE);
 
-    printf("El valor del elemento removido es: %d \n", *(int*)removed);
+    int i = 4;
 
-    //listDelete(listaA);
+    int* removed = listRemove(listaA, i);
+
+    printf("El valor del elemento %d removido es: %d \n", i, *removed);
+
+    printf("El siguiente del first de la lista es: %d\n", *(int*)listaA->last->prev->data);
+
+    printf("El anterior del last es: %d\n", *(int*)listaA->last->prev->data);
+
+    listDelete(listaA);
+    intDelete(removed);
+
 
 }
 
@@ -77,10 +171,24 @@ void test_listGet(){
     int32_t numB = 4;
     listAddFirst(listaA, &numB);
 
-    listElem_t* resultado = listGet(listaA, 1);
+    int32_t numC = 299;
+    listAddFirst(listaA, &numC);
+
+    int32_t numX = 349;
+    listAddFirst(listaA, &numX);
+
+    int32_t numD = 292;
+    listAddFirst(listaA, &numD);
+
+    int32_t numE = 290;
+    listAddFirst(listaA, &numE);
+
+    int i = 5;
+
+    int* resultado = listGet(listaA, i);
 
 
-    printf("El valor 1 es %d \n", *(int*)resultado->data);
+    printf("El valor %d es %d \n", i, *resultado);
 
     listDelete(listaA);
 }
@@ -281,6 +389,7 @@ void test_intPrint(){
 
     fclose(pFile);
 }
+
 
 /*int32_t CstrCmp(char* a, char*b){
 
