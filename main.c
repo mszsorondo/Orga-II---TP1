@@ -30,9 +30,14 @@ int main (void){
     //test_cardNew();
     //test_cardCmp();
     
+    //test_listAddFirst();
     
+    //test_listGet();
+
+    test_listRemove();
+
     //test_listNew_typeTest();
-    test_listGetSize();
+    //test_listGetSize();
 
 
     /*test_intPrint();
@@ -41,12 +46,94 @@ int main (void){
     return 0;
 }
 
+void test_listRemove(){
+    int32_t numA = 36;
+    list_t* listaA = listNew(1);
+    listAddFirst(listaA, &numA);
+
+    int32_t numB = 4;
+    listAddFirst(listaA, &numB);
+
+    int32_t numC = 299;
+    listAddFirst(listaA, &numC);
+
+    int* removed = listRemove(listaA, 1);
+
+    printf("El valor del elemento removido es: %d \n", *(int*)removed);
+
+    removed = listRemove(listaA, 1);
+
+    printf("El valor del elemento removido es: %d \n", *(int*)removed);
+
+    //listDelete(listaA);
+
+}
+
+void test_listGet(){
+    int32_t numA = 36;
+    list_t* listaA = listNew(1);
+    listAddFirst(listaA, &numA);
+
+    int32_t numB = 4;
+    listAddFirst(listaA, &numB);
+
+    listElem_t* resultado = listGet(listaA, 1);
+
+
+    printf("El valor 1 es %d \n", *(int*)resultado->data);
+
+    listDelete(listaA);
+}
+
+
+void test_listAddFirst(){
+    int32_t numA = 36;
+    list_t* listaA = listNew(1);
+    listAddFirst(listaA, &numA);
+
+    int32_t numB = 4;
+    listAddFirst(listaA, &numB);
+
+    int32_t numC = 299;
+    listAddFirst(listaA, &numC);
+
+    int valor = *(int*)listaA->first->data;
+
+    int sigValor = *(int*)listaA->first->next->data;
+
+    int antSeg = *(int*)listaA->first->next->prev->data;
+
+    int antUlt = *(int*)listaA->last->prev->data;
+
+    printf("El tamanio de la lista es %d y su primer elemento es %d \n", listaA->size, valor);
+
+    printf("El tamanio de la lista es %d y su segundo elemento es %d \n", listaA->size, sigValor);
+    
+    printf("El anterior elemento del segudo es %d \n", antSeg);
+
+    printf("El anterior elemento del ultimo es %d \n", antUlt);
+
+    listDelete(listaA);
+
+
+    char* stringTest = "HolaMArqueXJAjajajaj$(!$)=";
+
+    list_t* listaB = listNew(2);
+
+    listAddFirst(listaB, stringTest);
+
+    printf("El tamaño de la lista es %d y su primer elemento es: %s \n", listaB->size, listaB->first->data);
+
+    listDelete(listaB);
+
+}
+
 void test_listGetSize(){
     type_t tipo = 2; 
     
     list_t* lista1 = listNew(tipo);
 
-    printf("La lista es de tipo %x \n", lista1->size); //fefff8c8 con tipo 0 4e53040 con tipo 2
+    printf("La lista es de largo %x \n", lista1->size); //fefff8c8 con tipo 0 4e53040 con tipo 2
  
 }
 void test_listNew_typeTest(){

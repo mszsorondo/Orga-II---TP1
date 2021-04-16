@@ -33,7 +33,6 @@ global cardAddStacked
 global cardDelete
 global cardPrint
 
-
 section .data
 formato: db '%d', 10, 0
 formato_2: db '%s', 10, 0
@@ -42,6 +41,8 @@ section .text
 extern malloc
 extern free
 extern fprintf
+extern getDeleteFunction
+extern getCloneFunction
 ; ** Int **
 
 ; int32_t intCmp(int32_t* a, int32_t* b)
@@ -347,37 +348,48 @@ listAddFirst:
     mov r12, rdi
     mov r13, rsi
 
-    ;FALTA CLONAR EL DATO! EL CLONADO ES EL QUE SE METE EN LA LISTA
+
+    ;obtener el tipo de la lista, ponerlo en r8
+    ;comparamos el tipo contra o 0, o 1, o 2 o 3
+    ;y llamamos a la función que clona que corresponde en consecuencia
+    
+    mov rdi, [rdi]
+    call getCloneFunction
+
+    mov rdi, r13
+    call rax
+    mov r15, rax
 
     ; asumo que se debe hacer una copia de data y no del valor al que apunta
 .s_listElem_create:
     ; un nodo contiene tres punteros asique debo tener 24 bytes de memoria reservada
     mov rdi, 24
     call malloc
-    mov [rax], r13 ; muevo a los primeros 8 bits del nodo el puntero a data
+    mov [rax], r15 ; muevo a los primeros 8 bytes del nodo el puntero a data
 
-    mov rsi, [r12+8]
-    mov rdi, [rax+8]
+    
+    lea rsi, [r12+8]
+    lea rdi, [rax+8]
     movsq ; el siguiente del nuevo es el primero actual
     mov qword [rax+16], 0
+     ; incrementamos el tamanio de la lista
 ; debo hacer que el anterior del primero sea el nodo recien creado
 .update_prev:
-    cmp dword [r12+4], 0
+    cmp byte [r12+4], 0
     jne .noEstabaVacia 
     mov [r12+16], rax ; si estaba vacia entonces el ultimo nodo de la lista tambien sera el nuevo
     jmp .actualizarPrimero
 
 .noEstabaVacia:
+    
 ; el primer elemento es apuntado por el offset 8 de la lista, cuyo inicio apuntado por r12
     mov r14, [r12+8] ; tengo en r14 la direccion del viejo primer nodo
-    mov [r14+16], rax; el proximo del viejo primer nodo sera la dir del nuevo
+    mov [r14+16], rax; el proximo del viejo primer nodo sera la dir del nuevo CORREGIR
 .actualizarPrimero:
     mov [r12+8], rax ; en rax tenemos el inicio del nuevo nodo
-
+    inc byte [r12+4]
     ;CREO QUE FALTA ALGO
 .fin:
-    mov rax, 
-
     add rsp, 8
     pop r14
     pop r13
@@ -387,22 +399,186 @@ listAddFirst:
 
 ; void* listGet(list_t* l, uint8_t i)
 listGet:
+; rdi -> lista
+; rsi = i > rsi>= [rdi+4]? > si es asi devolver cero en rax, sino...
+;pedir i veces el next
+
+; setear rcx a cero > setear un iterador en [rdi+8] > cmp rcx con i > 
+push rbp
+mov rbp, rsp
+
+mov r9,0
+mov r9d, dword [rdi+4]
+
+cmp rsi, r9
+JGE .finInvalido
+mov rax, 0
+
+mov rcx, 0 
+mov rax, [rdi+8]
+.ciclo:
+    cmp rcx, rsi
+    JE .fin
+    mov rax, [rax+8]
+    inc rcx
+    jmp .ciclo
+
+
+
+.finInvalido:
+    mov rax, 0
+    jmp .fin
+.fin:
+
+pop rbp
 ret
 
 ; void* listRemove(list_t* l, uint8_t i)
 listRemove:
+push rbp
+mov rbp, rsp
+sub rsp,8
+push r15
+push r14
+push r13
+push r12
+push rbx
+
+mov r15, rdi
+mov r14, rsi
+call listGet
+
+; si esta fuera, saltar al fin y delvolver cero
+cmp dword [r15+4], r14d
+JLE .fin
+
+;si es el ultimo, actualizar solo .siguienteDelAnterior -> deletear actual
+mov r10d, dword [r15+4]
+dec r10d
+cmp r10d, r14d
+JE .esElUltimo; DEBUGGEAR!!!!
+
+;si es el primero, actualizar solo .anteriorDelsiguiente -> deletear actual
+cmp r14, 0
+JE .esElprimero
+;sino, hacer ambos -> deletear actual
+
+; si pasas por aca, es porque no es ni el primero ni el ultimo y esta dentro
+mov r11, 2
+jmp .siguienteDelAnterior
+
+
+.esElprimero:
+mov r11, 1
+jmp .anteriorDelSiguiente
+
+.esElUltimo:
+mov r11, 0
+
+.siguienteDelAnterior:
+mov r8, [rax+8]; siguiente
+mov r9, [rax+16]; anterior
+mov rsi, r8; el siguiente
+lea rdi, [r9+8]
+movsq
+cmp r11, 0
+je .fin
+
+.anteriorDelSiguiente:
+mov r8, [rax+16]; anterior
+mov r9, [rax+8]; siguiente
+lea rdi, [r9+16]
+mov rsi, r8
+movsq
+
+.fin:
+.deletearActual:
+mov rdi, rax 
+mov rbx, [rdi]; en rbx guardo puntero data
+call free
+mov rax, rbx
+
+pop rbx
+pop r12
+pop r13
+pop r14
+pop r15
+add rsp, 8
+pop rbp
 ret
 
 ; void  listSwap(list_t* l, uint8_t i, uint8_t j)
 listSwap:
+    push rbp
+    mov rbp, rsp
+
+.checkRange:
+    cmp esi, dword [rdi+4]
+    JGE .fin
+    cmp edx, dword [rdi+4]
+    JGE .fin
+
+    mov r15, rdi; para preservar la lista
+    mov r14, rdx; para preservar j
+
+    call listGet
+    ;tengo en rax el i-esimo elemento
+    mov rbx, rax ; lo paso a rbx
+    mov rsi, r14
+    mov rdi, r15 ;recupero la lista en rdi
+
+    call listGet
+    ; tengo en rax el j-esimo elemento
+    mov r8, rax; a esta altura tengo en rbx el iesimo y en r8 el jesimo 
+
+    ;COMPLETAR...
+
+
+.fin:        
+
+    pop rbp
 ret
 
 ; list_t* listClone(list_t* l)
 listClone:
 ret
 
+
 ; void listDelete(list_t* l)
 listDelete:
+push rbp
+mov rbp, rsp
+
+mov r12, rdi
+
+mov rdi, [rdi]
+call getDeleteFunction; tenemos en rax la funcion que deletea data
+mov r13, rax
+
+mov rdi, r12
+call listGetSize; en rax tenemos el size
+
+mov rcx, 0
+mov r14, [r12+16] ; en r14 tenemos el puntero al ultimo nodo
+
+.borrarNodo:
+    cmp rcx, rax
+    je .fin
+    cmp r14, 0
+    je .fin
+    mov rdi, [r14]
+    call r13 ; data esta liberado ACA
+    mov r15, r14
+    mov r14, [r14+16] ; y ahora tengo el previo en r14
+    mov rdi, r15
+    call free
+    inc rcx
+    jmp .borrarNodo
+
+.fin:
+mov rdi, r12
+call free
+pop rbp
 ret
 
 ; ** Card **
