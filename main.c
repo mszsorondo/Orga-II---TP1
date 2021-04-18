@@ -41,7 +41,7 @@ int main (void){
 
     //test_listSwap();
 
-    test_listPrint();
+    //test_listPrint();
 
     //test_listNew_typeTest();
     //test_listGetSize();
@@ -50,7 +50,53 @@ int main (void){
     /*test_intPrint();
     test_intCmp();
     test_intClone();*/
+
+
+    //test_arrayNew();
+    //test_arrayGetSize();
+    printf("RECORDAR re-testear arrayGetSize luego de poder hacer inserciones");
+    test_arrayAddLast();
+
+
     return 0;
+}
+
+void test_arrayAddLast(){
+    array_t* arr1 = arrayNew(1,4);
+    array_t* arr2 = arrayNew(2, 7);
+
+    int32_t fst = 88;
+    int32_t snd = 4;
+    int32_t trd = 8;
+    arrayAddLast(arr1, &fst);
+    arrayAddLast(arr1, &snd);
+    arrayAddLast(arr1, &trd);
+    printf("El tamanio del array deberia ser 3 y es: %d \n", arrayGetSize(arr1));
+
+    int32_t cua = 47;
+    int32_t qui = 9;
+    arrayAddLast(arr1, &cua);
+    arrayAddLast(arr1, &qui);
+
+    printf("El tamanio del array deberia ser 4 y es: %d \n", arr1->size);
+
+}
+void test_arrayGetSize(){
+    array_t* arr1 = arrayNew(1,4);
+    array_t* arr2 = arrayNew(2, 7);
+
+    printf("El tamanio del array es: %d \n", arrayGetSize(arr1));
+    printf("El tamanio del array es: %d \n", arrayGetSize(arr2));
+}
+
+void test_arrayNew(){
+    array_t* arr1 = arrayNew(1,4);
+    array_t* arr2 = arrayNew(2, 7);
+
+    printf("El tipo del array es %d y su capacidad es %d\n", arr1->type, arr1->capacity);
+    printf("Data deberia apuntar a cero... %d", *(int*)arr1->data);
+    printf("El tipo del array es %d y su capacidad es %d\n", arr2->type, arr2->capacity);
+    printf("Data deberia apuntar a cero... %d", *(int*)*arr2->data);
 }
 
 void test_listPrint(){

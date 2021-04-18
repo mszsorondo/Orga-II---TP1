@@ -267,17 +267,118 @@ strLen:
 
 
 ; ** Array **
-
+;estructura... 1. type (a4 bytes) 2. uint_8t size 
+;3. uint_8t capacity 4. puntero al espacio de memoria 
+;que contiene los punteros a los valores
+;campos:  4 bytes para type, 1 byte para size,
+;1 byte para capacity, dejo 2 bytes libres en el medio 
+; luego 8 bytes para el puntero a data. TOTAL 16 bytes
 ; array_t* arrayNew(type_t t, uint8_t capacity)
 arrayNew:
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r15
+
+    ; type en rdi, capacity en rsi
+    mov rbx, rdi
+    mov r15, rsi; preservo los parametros de entrada
+
+    ;falta hacer que data (rax+8) apunte a un espacio
+    ;nuevo
+
+
+    mov rdi, 16
+    call malloc
+    ; tenemos en rax el puntero al inicio de la estructura
+
+    mov dword [rax], ebx ; ponemos el type
+    ; en rax + 4 tenemos el tamanio, rax+5 capacidad
+    mov byte [rax+4], 0; tamanio inicial
+    mov byte [rax+5], r15b
+
+   
+    mov rcx, r15
+    mov r15,rax 
+
+    mov rdi, rcx
+    call malloc
+
+    ; tengo el puntero a los punteros de los elementos del arreglo en RAX
+    ; los quiero en el octavo byte en adelante de la estructura (r15)
+
+    mov [r15+8], rax
+
+    mov rax, r15; necesito recuperar en rax el puntero al inicio de 
+    ;la estructura
+
+    pop r15
+    pop rbx
+    pop rbp
 ret
 
 ; uint8_t  arrayGetSize(array_t* a)
 arrayGetSize:
+    push rbp
+    mov rbp, rsp
+    
+    ; en rdi tenemos el puntero al array
+
+    mov rax, [rdi+4]
+
+
+
+    pop rbp
 ret
 
 ; void  arrayAddLast(array_t* a, void* data)
 arrayAddLast:
+    ; tenemos que 1. copiar el dato (con el getClone)
+    ; 2. recorrer [a+8] hasta llegar a la posicion size
+    ; 3. escribir el puntero data en la posicion
+    push rbp
+    mov rbp, rsp
+    push rbx
+    push r15
+
+    ; 0. COMPARAR SIZE CON CAPACITY!!!
+    mov r9b, byte [rdi+4]
+    cmp r9b, [rdi+5]
+    je .fin
+
+
+    ; tenemos en RDI el puntero al arreglo
+    ; tenemos en RSI el puntero al valor del elemento
+    mov rbx, rsi; resguardamos data
+    mov r15 ,rdi; 
+    mov rdi, 0 ; quiero limpiar tambien la parte alta de rdi
+    mov edi, dword [r15]
+
+    call getCloneFunction ; tenemos en rax el puntero a la funcion clone
+    mov rdi, rbx; quiero a data como parametro
+    call rax; ya esta clonado el valor y tengo su puntero en RAX
+    ; resta agregarlo a la posicion size desde [r15+8]
+    mov rbx, [r15+8]
+    mov r9, 0
+
+.ciclo:
+    cmp r9b, byte [r15+4]
+    je .addN
+    inc r9
+    jmp .ciclo
+
+.addN:
+    mov [rbx+r9], rax
+    inc byte [r15+4]
+
+
+.fin:
+
+
+    pop r15
+    pop rbx
+    pop rbp
+
 ret
 
 ; void* arrayGet(array_t* a, uint8_t i)
