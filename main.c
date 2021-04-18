@@ -72,7 +72,9 @@ void test_arrayAddLast(){
     arrayAddLast(arr1, &snd);
     arrayAddLast(arr1, &trd);
     printf("El tamanio del array deberia ser 3 y es: %d \n", arrayGetSize(arr1));
-
+    printf("El primer elemento es: %d \n", (arr1->data)[0]);
+    printf("El segundo elemento es: %d \n", (arr1->data)[1]);
+    printf("El tercer elemento es: %d \n", (arr1->data)[2]);
     int32_t cua = 47;
     int32_t qui = 9;
     arrayAddLast(arr1, &cua);

@@ -277,8 +277,10 @@ strLen:
 arrayNew:
     push rbp
     mov rbp, rsp
+    sub rsp, 8
     push rbx
     push r15
+    push r14
 
     ; type en rdi, capacity en rsi
     mov rbx, rdi
@@ -297,7 +299,7 @@ arrayNew:
     mov byte [rax+4], 0; tamanio inicial
     mov byte [rax+5], r15b
 
-   
+    lea r15, [r15*8]
     mov r14, rax
     mov rdi, r15
     call malloc
@@ -309,9 +311,10 @@ arrayNew:
 
     mov rax, r14; necesito recuperar en rax el puntero al inicio de 
     ;la estructura
-
+    pop r14
     pop r15
     pop rbx
+    add rsp, 8
     pop rbp
 ret
 
