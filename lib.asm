@@ -298,10 +298,8 @@ arrayNew:
     mov byte [rax+5], r15b
 
    
-    mov rcx, r15
-    mov r15,rax 
-
-    mov rdi, rcx
+    mov r14, rax
+    mov rdi, r15
     call malloc
 
     ; tengo el puntero a los punteros de los elementos del arreglo en RAX
