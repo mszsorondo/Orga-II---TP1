@@ -54,7 +54,7 @@ int main (void){
 
     //test_arrayNew();
     //test_arrayGetSize();
-    printf("RECORDAR re-testear arrayGetSize luego de poder hacer inserciones");
+    printf("RECORDAR re-testear arrayGetSize luego de poder hacer inserciones\n");
     test_arrayAddLast();
 
 
@@ -94,9 +94,9 @@ void test_arrayNew(){
     array_t* arr2 = arrayNew(2, 7);
 
     printf("El tipo del array es %d y su capacidad es %d\n", arr1->type, arr1->capacity);
-    printf("Data deberia apuntar a cero... %d", *(int*)arr1->data);
+    
     printf("El tipo del array es %d y su capacidad es %d\n", arr2->type, arr2->capacity);
-    printf("Data deberia apuntar a cero... %d", *(int*)*arr2->data);
+    
 }
 
 void test_listPrint(){

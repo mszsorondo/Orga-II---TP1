@@ -293,7 +293,7 @@ arrayNew:
     ; tenemos en rax el puntero al inicio de la estructura
 
     mov dword [rax], ebx ; ponemos el type
-    ; en rax + 4 tenemos el tamanio, rax+5 capacidad
+    ; en rax + 4 tenemos el tamanio, rax+5 capacidad 0x00000000004066b0
     mov byte [rax+4], 0; tamanio inicial
     mov byte [rax+5], r15b
 
@@ -305,9 +305,9 @@ arrayNew:
     ; tengo el puntero a los punteros de los elementos del arreglo en RAX
     ; los quiero en el octavo byte en adelante de la estructura (r15)
 
-    mov [r15+8], rax
+    mov [r14+8], rax
 
-    mov rax, r15; necesito recuperar en rax el puntero al inicio de 
+    mov rax, r14; necesito recuperar en rax el puntero al inicio de 
     ;la estructura
 
     pop r15
