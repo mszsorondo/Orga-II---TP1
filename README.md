@@ -28,7 +28,7 @@
 	✖ void cardDelete(card_t* c)(11 Inst.)  
 	void cardPrint(card_t* c, FILE* pFile)(24 Inst.)  			FALTA
 ### jueves 14 - viernes 15  
-	array_t* arrayNew(type_t t, uint8_t capacity)(24 Inst.)  		FALTA
+	✖ array_t* arrayNew(type_t t, uint8_t capacity)(24 Inst.)  		FALTA
 	uint8_t arrayGetSize(array_t* a)(3 Inst.)  				FALTA
 	void arrayAddLast(array_t* a, void* data)(20 Inst.)  			FALTA
 	void* arrayGet(array_t* a, uint8_t i)(8 Inst.)  			FALTA
@@ -40,9 +40,9 @@
 	✖ uint8_t listGetSize(list_t* l)(2 Inst.)
 	✖ void listAddFirst(list_t* l, void* data)(27 Inst.)
 	✖ void* listGet(list_t* l, uint8_t i)(13 Inst.)  			
-	void* listRemove(list_t* l, uint8_t i)(37 Inst.)  
-	void listSwap(list_t* l, uint8_t i, uint8_t j)(24 Inst.)  
-	void listDelete(list_t* l)(28 Inst.) 
+	✖ void* listRemove(list_t* l, uint8_t i)(37 Inst.)  
+	✖ void listSwap(list_t* l, uint8_t i, uint8_t j)(24 Inst.)  
+	✖ void listDelete(list_t* l)(28 Inst.) 
 	y  
 	void arrayPrint(array_t* a, FILE* pFile)(8 L ́ıneas)  			  FALTA
 	void listAddLast(list_t* l, void* data)(11 L ́ıneas)  

@@ -51,36 +51,97 @@ int main (void){
     test_intCmp();
     test_intClone();*/
 
-
+    test_arrayRemove();
+    //test_arraySwap();
     //test_arrayNew();
     //test_arrayGetSize();
-    printf("RECORDAR re-testear arrayGetSize luego de poder hacer inserciones\n");
-    test_arrayAddLast();
+    //test_arrayAddLast();
+}
 
 
-    return 0;
+void test_arraySwap(){
+    array_t* arr1 = arrayNew(1,10);
+    
+    int32_t fst = 88;
+    int32_t snd = 4;
+    int32_t trd = 8;
+    int32_t a = 9;
+    int32_t b = 10;
+    arrayAddLast(arr1, &fst);
+    arrayAddLast(arr1, &snd);
+    arrayAddLast(arr1, &trd);
+    arrayAddLast(arr1, &a);
+    arrayAddLast(arr1, &b);
+
+    for(int i = 0; i < arr1->size; i++){
+        int32_t* aux = arrayGet(arr1, i);
+        printf("%d ", *aux);
+    }
+    printf("\n");
+
+    arraySwap(arr1, 1, 4);
+
+    arraySwap(arr1, -1, 3);
+
+    arraySwap(arr1, 1, -3);
+
+    arraySwap(arr1, 1, 25);
+
+    arraySwap(arr1, 25, 1);
+
+    for(int i = 0; i < arr1->size; i++){
+        int32_t* aux = arrayGet(arr1, i);
+        printf("%d ", *aux);
+    }
+    printf("\n");
+
+    arrayDelete(arr1);
+
 }
 
 void test_arrayAddLast(){
     array_t* arr1 = arrayNew(1,4);
-    array_t* arr2 = arrayNew(2, 7);
-
+    
     int32_t fst = 88;
     int32_t snd = 4;
     int32_t trd = 8;
     arrayAddLast(arr1, &fst);
     arrayAddLast(arr1, &snd);
     arrayAddLast(arr1, &trd);
+    int32_t* primero = arrayGet(arr1, 0);
+    int32_t* segundo = arrayGet(arr1, 1);
+    int32_t* tercero = arrayGet(arr1, 2);
     printf("El tamanio del array deberia ser 3 y es: %d \n", arrayGetSize(arr1));
-    printf("El primer elemento es: %d \n", (arr1->data)[0]);
-    printf("El segundo elemento es: %d \n", (arr1->data)[1]);
-    printf("El tercer elemento es: %d \n", (arr1->data)[2]);
+    printf("El primer elemento es: %d \n", *primero);
+    printf("El segundo elemento es: %d \n", *segundo);
+    printf("El tercer elemento es: %d \n", *tercero);
     int32_t cua = 47;
     int32_t qui = 9;
+
+    int32_t* cuarto = arrayGet(arr1, 3);
     arrayAddLast(arr1, &cua);
     arrayAddLast(arr1, &qui);
 
     printf("El tamanio del array deberia ser 4 y es: %d \n", arr1->size);
+
+    arrayDelete(arr1);
+
+
+
+    array_t* strArr = arrayNew(2,3);
+
+    arrayAddLast(strArr,"un pete");
+    arrayAddLast(strArr,"los + potros de FCEyN");
+
+    printf("El tamanio del array es: %d \n",arrayGetSize(strArr));
+
+    printf("Quien es mati? %s\n", arrayGet(strArr,0));
+
+    printf("Somos %s\n", arrayGet(strArr,1));
+
+    arrayDelete(strArr);
+
+    
 
 }
 void test_arrayGetSize(){

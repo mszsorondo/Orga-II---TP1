@@ -54,7 +54,7 @@ intCmp:
 
     MOV EBX, [RDI]
     CMP EBX, [RSI]
-    JZ cero
+JZ cero
     JG menosUno
     MOV EAX, 1
     JMP fin
@@ -360,16 +360,16 @@ arrayAddLast:
     call rax; ya esta clonado el valor y tengo su puntero en RAX
     ; resta agregarlo a la posicion size desde [r15+8]
     mov rbx, [r15+8]
-    mov r9, 0
+    mov rcx, 0
 
 .ciclo:
-    cmp r9b, byte [r15+4]
+    cmp cl, byte [r15+4]
     je .addN
-    inc r9
+    inc cl
     jmp .ciclo
 
 .addN:
-    mov [rbx+r9], rax
+    mov [rbx+rcx*8], rax
     inc byte [r15+4]
 
 
@@ -384,6 +384,24 @@ ret
 
 ; void* arrayGet(array_t* a, uint8_t i)
 arrayGet:
+    push rbp
+    mov rbp, rsp
+    
+    mov r8, rsi
+    cmp byte [rdi+4],r8b
+    jle .retCero
+
+    mov r9, [rdi+8]
+    ;tengo en r9 el puntero al arreglo
+    mov rax, [r9+rsi*8]
+    jmp .fin
+
+.retCero:
+    mov rax,0
+
+.fin:
+    pop rbp
+
 ret
 
 ; void* arrayRemove(array_t* a, uint8_t i)
@@ -391,14 +409,102 @@ arrayRemove:
 ret
 
 ; void  arraySwap(array_t* a, uint8_t i, uint8_t j)
-arraySwap:
+arraySwap: 
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r13
+    push r14
+    push r15
+    
+    mov r10, rsi; muevo i solo para hacer la comparacion con la parte baja porque no se si rsi la tiene
+    cmp r10b, byte [rdi+4]
+    jge .fin
+    cmp dl, byte [rdi+4]
+    jge .fin
+
+    cmp dl, 0 ; por debajo?
+    jl .fin
+
+    cmp r10b, 0
+    jl .fin
+
+    ; en rdi esta el puntero a la estructura
+    mov r15, rdi
+    mov r12, rsi
+    mov r13, rdx
+
+    call arrayGet
+    ; en rax tengo el puntero al iesimo valor
+    mov r14, rax ; en r14 puntero al iesimo
+    mov rdi, r15
+    mov rsi, r13
+    call arrayGet
+    ; en rax tengo el puntero al jesimo valor
+    mov r9, rax; en r9 puntero al jesimo
+
+    mov r15, [r15+8] ; guardo en r15 el puntero al  arreglo
+    mov [r15+r12*8], r9
+    mov [r15+r13*8], r14
+
+.fin:
+
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
 ret
 
 ; void  arrayDelete(array_t* a)
 arrayDelete:
+push rbp
+mov rbp, rsp
+push r13
+push r12
+;a en rdi
+
+mov r13, rdi ;preservo a
+
+mov rdi, [rdi] ;obtengo el tipo
+call getDeleteFunction ;obtengo la funcion q borra al tipo
+mov r12, rax ;la preservo
+
+
+
+mov r9, [r13+8] ;obtengo el puntero al arreglo de punteros
+mov r14b, byte [r13+4] ;obtengo el size
+dec r14 ;lo hago valido para recorrer
+
+
+
+
+mov rcx, 0 ;inicio contador
+.ciclo:
+    cmp cl, r14b ;comparo el contador contra posiciones validas
+    JG .fin ;de no ser asi, finaliza
+
+    lea rdi, [r9+rcx*8]
+    mov rdi, [rdi] ;paso a rdi el puntero al valor
+    call r12      ;lo limpio
+
+
+    inc cl       ;inc el contador
+    jmp .ciclo    ;loop
+
+.fin:
+mov rdi, [r13+8] ;limpio el puntero al arreglo de punteros
+call free 
+
+mov rdi, r13   ;limpio la estructura
+call free
+
+pop r12
+pop r13
+pop rbp
 ret
 
-; ** Lista **
+; ** Lista ** 
 
 ; list_t* listNew(type_t t)
 listNew:
