@@ -22,7 +22,6 @@ global listRemove
 global listSwap
 global listClone
 global listDelete
-global listPrint
 global cardNew
 global cardGetSuit
 global cardGetNumber
@@ -36,6 +35,13 @@ global cardPrint
 section .data
 formato: db '%d', 0
 formato_2: db '%s', 0
+formato_3: db '{%s-',0
+formato_4: db '%d-',0
+formato_5: db '}', 0
+
+formato_6: db "{",0
+formato_7: db "-",0
+formato_8: db "}",0
 
 section .text
 extern malloc
@@ -43,6 +49,8 @@ extern free
 extern fprintf
 extern getDeleteFunction
 extern getCloneFunction
+extern listAddLast
+extern listPrint
 ; ** Int **
 
 ; int32_t intCmp(int32_t* a, int32_t* b)
@@ -196,9 +204,13 @@ strCmp:
 strClone:
     push rbp
     mov rbp, rsp  
+    sub rsp, 8
+    push r12
     ;a en rdi
 
     mov rsi, rdi
+
+    mov r12, rdi
 
     call strLen ; devuelve en rax la longitud
 
@@ -213,7 +225,7 @@ strClone:
     mov rcx, 0
 
 .ciclo:
-    mov dl, [rsi+rcx]
+    mov dl, [r12+rcx]
     mov [rax+rcx], dl
     inc rcx
     cmp dl, 0
@@ -221,6 +233,8 @@ strClone:
 
 
 .fin:
+    pop r12
+    add rsp, 8
     pop rbp
     ret
 
@@ -406,6 +420,57 @@ ret
 
 ; void* arrayRemove(array_t* a, uint8_t i)
 arrayRemove:
+push rbp
+mov rbp, rsp
+sub rsp, 8
+push r12
+push r13
+push r14
+;a en rdi
+;i en rsi
+
+mov r12, rdi
+mov r13, rsi
+
+call arrayGet
+mov r14, rax
+
+mov r15, 0
+mov r15b, byte[r12+4]
+dec r15b
+
+cmp sil, r15b
+jg .fin
+
+
+cmp r13b, 0
+jl .fin
+
+
+;swapeo i hasta size
+mov rcx, 0
+mov rcx, r13
+inc r15b
+.ciclo:
+    cmp cl, r15b
+    JE .delete
+    mov rdi, r12
+    mov rsi, r13
+    lea rdx, [rsi+1]
+    call arraySwap
+    inc cl
+    inc r13
+    jmp .ciclo
+
+.delete:
+    dec byte [r12+4]
+    mov rax, r14
+.fin:
+pop r14
+pop r13
+pop r12
+add rsp, 8
+pop rbp
 ret
 
 ; void  arraySwap(array_t* a, uint8_t i, uint8_t j)
@@ -611,7 +676,6 @@ listGet:
 ; rsi = i > rsi>= [rdi+4]? > si es asi devolver cero en rax, sino...
 ;pedir i veces el next
 
-; setear rcx a cero > setear un iterador en [rdi+8] > cmp rcx con i > 
 push rbp
 mov rbp, rsp
 
@@ -625,18 +689,20 @@ mov rcx, 0
 mov rax, [rdi+8]
 .ciclo:
     cmp rcx, rsi
-    JE .fin
+    JE .finValido
     mov rax, [rax+8]
     inc rcx
     jmp .ciclo
 
-
-
 .finInvalido:
     mov rax, 0
     jmp .fin
+
+.finValido:
+    mov rax, [rax]
+    jmp .fin
+
 .fin:
-mov rax, [rax]
 pop rbp
 ret
 
@@ -648,6 +714,7 @@ mov rbp, rsp
 ;list en rdi
 ;i en rsi
 mov r12, rdi
+mov r13, 0
 mov r13, rsi
 
 call listGetAux
@@ -656,14 +723,28 @@ mov r14, rax
 cmp rax, 0
 JE .fin
 
-cmp r13, byte 0
+
+cmp r13b, 0
 JE .iEsElPrimero
+
+cmp byte [r12+4], 1
+JE .iEs0
+
+.iEs0:
+cmp r13b, 0
+JE .iEsElUnico
+JNE .fin
 
 mov r15, qword 0
 mov r15b, byte [r12+4]
 dec r15b
 cmp r15b, r13b
 JE .iEsElUltimo
+
+.iEsElUnico:
+    mov qword [r12+8], 0
+    mov qword [r12+16], 0
+    jmp .final
 
 .iEsIntermedio:
 	mov r8, r13
@@ -768,6 +849,52 @@ ret
 
 ; list_t* listClone(list_t* l)
 listClone:
+    push rbp
+    mov rbp, rsp
+    ;lista en rdi
+    push r15
+    push r14
+    push r13
+    push r12
+
+    mov r13, rdi
+    
+    mov rdi, 0
+    mov rdi, [r13]
+    call listNew
+    mov r12, rax ;en r12 esta la nueva lista
+
+    ;creamos la lista nueva
+    ;usamos listGet para obtener posición size-1 = i  O  usamos convencion c y llamamos a listAddLast
+    ;usamos listAddFirst para poner el elemento q sacmaos antes de listGet
+    ;decrementamos i hasta 0
+mov r15, 0
+mov r14, 0
+mov r14b, byte [r13+4]
+dec r14b
+.ciclo:
+    cmp r15b, r14b
+    JG .fin
+    mov rdi, r13
+    mov rsi, r15
+    call listGet
+
+    mov rdi, r12
+    mov rsi, rax
+    call listAddLast
+
+    inc r15b
+
+    jmp .ciclo
+
+.fin:
+mov rax, r12
+pop r12
+pop r13
+pop r14
+pop r15
+pop rbp
+
 ret
 
 
@@ -775,12 +902,23 @@ ret
 listDelete:
 push rbp
 mov rbp, rsp
+sub rsp, 8
+push r12
+push r13
+push r14
+push r15
+push rbx
 
-mov r12, rdi
 
-mov rdi, [rdi]
+mov r12, rdi  ;r12 -> lista
+
+;mov rdx, [rdi]
+;mov rdi, 0
+;mov edi, edx
+
+mov rdi, [rdi]  ;rdi tiene el type
 call getDeleteFunction; tenemos en rax la funcion que deletea data
-mov r13, rax
+mov r13, rax        ; r13 -> 
 
 mov rdi, r12
 call listGetSize; en rax tenemos el size
@@ -788,8 +926,10 @@ call listGetSize; en rax tenemos el size
 mov rcx, 0
 mov r14, [r12+16] ; en r14 tenemos el puntero al ultimo nodo
 
+mov rbx, rax
+
 .borrarNodo:
-    cmp rcx, rax
+    cmp rcx, rbx
     je .fin
     cmp r14, 0
     je .fin
@@ -805,8 +945,15 @@ mov r14, [r12+16] ; en r14 tenemos el puntero al ultimo nodo
 .fin:
 mov rdi, r12
 call free
+pop rbx
+pop r15
+pop r14
+pop r13
+pop r12
+add rsp, 8
 pop rbp
 ret
+
 
 ; ** Card **
 
@@ -821,16 +968,17 @@ cardNew:
     push r13
     push r14
     push r15
+    sub rsp, 8
+
     mov r12, rdi
     mov r13, rsi
-
+    
     call strClone
     mov r14, rax
 
     mov rdi, r13
     call intClone
     mov r15, rax
-
 
     mov rdi, 24
     call malloc
@@ -839,10 +987,12 @@ cardNew:
     mov [rax+8], r15
     mov qword [rax+16], 0
 
+    add rsp, 8
     pop r15
     pop r14
     pop r13
     pop r12
+
     POP RBP
     RET
 
@@ -868,6 +1018,12 @@ ret
 
 ; list_t* cardGetStacked(card_t* c)
 cardGetStacked:
+push rbp
+mov rbp, rsp
+
+mov rax, [rdi+16]
+
+pop rbp
 ret
 
 ; int32_t cardCmp(card_t* a, card_t* b)
@@ -901,40 +1057,145 @@ ret
 
 ; card_t* cardClone(card_t* c)
 cardClone:
+push rbp
+mov rbp, rsp
+
+push r12
+push r13
+
+mov r12, rdi ;guardamos c
+
+mov rdi, [r12] ;pasamos el suit como parametro para cardNew
+mov rsi, [r12+8] ;pasamos el number como parametro para cardNew
+call cardNew
+mov r13, rax     ;creamos la carta, la almacenamos en r13
+
+cmp qword [r12+16], 0
+JE .noHayLista
+
+mov rdi, [r12+16]  ;si hay lista, la clonamos
+call listClone
+mov [r13+16], rax  ;la guardamos
+
+.noHayLista:
+
+
+mov rax, r13
+
+pop r13
+pop r12
+
+pop rbp
 ret
 
 ; void cardAddStacked(card_t* c, card_t* card)
 cardAddStacked:
+    push rbp
+    mov rbp, rsp
+    push r12
+    push r15
+    sub rsp, 8
+    
+    mov r15, rdi ;guardamos c en r15
+    mov r12, rsi
+
+    cmp qword [r15+16], 0   ;el puntero esta en 0?
+    jne .insertarElemento   ;no, seguir, si insertar
+
+    mov rdi, 0
+    mov rdi, 3
+    call listNew ;en rax está la nueva lista
+    mov [r15+16], rax
+
+.insertarElemento:
+    mov rdi, [r15+16]
+    mov rsi, r12
+    call listAddFirst
+
+    add rsp, 8
+    pop r15
+    pop r12
+    pop rbp
 ret
 
 ; void cardDelete(card_t* c)
 cardDelete:
-PUSH RBP
+    PUSH RBP
     MOV RBP, RSP
+    PUSH r12
     ;RDI PUNTERO A CARD
 
-    MOV RSI, RDI
-    MOV RDI, [RSI]
-    CALL free
+    mov r12, rdi
 
-    
-    MOV RDI, [RSI+8]
-    CALL free
+    cmp qword [r12+16], 0
+    je .fin
 
+    mov rdi, [r12+16]
+    call listDelete
+.fin:
+    mov rdi, [r12]
+    call strDelete
 
-    MOV RDI, RSI
-    CALL free
+    mov rdi, [r12+8]
+    call intDelete
 
-
+    mov rdi, r12
+    call free
     POP RBP
 
 ret
 
 ; void cardPrint(card_t* c, FILE* pFile)
 cardPrint:
-ret
+    push rbp
+    mov rbp, rsp     ;pila alineada
+    push r12
+    push r13
+    sub rsp, 8
 
+    mov r12, rdi
+    mov r13, rsi
+    
+    mov rax, 0
+    mov rdi, r13
+    mov rsi, formato_6
+    call fprintf
+    
+    mov rax, 0
+    mov rdi, [r12 + 0]
+    mov rsi, r13
+    call strPrint
 
+    mov rax, 0
+    mov rdi, r13
+    mov rsi, formato_7
+    call fprintf
+
+    mov rax, 0
+    mov rdi, [r12 + 8]
+    mov rsi, r13
+    call intPrint
+
+    mov rax, 0
+    mov rdi, r13
+    mov rsi, formato_7
+    call fprintf
+
+    mov rax, 0
+    mov rdi, [r12 + 16]
+    mov rsi, r13
+    call listPrint
+
+    mov rax, 0
+    mov rdi, r13
+    mov rsi, formato_8
+    call fprintf
+
+    add rsp, 8
+    pop r13
+    pop r12
+    pop rbp
+    ret
 
 ;auxiliares
 listGetAux:
@@ -942,7 +1203,6 @@ listGetAux:
 ; rsi = i > rsi>= [rdi+4]? > si es asi devolver cero en rax, sino...
 ;pedir i veces el next
 
-; setear rcx a cero > setear un iterador en [rdi+8] > cmp rcx con i > 
 push rbp
 mov rbp, rsp
 

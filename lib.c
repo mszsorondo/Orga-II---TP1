@@ -41,6 +41,16 @@ funcPrint_t* getPrintFunction(type_t t) {
 /** Array **/
 
 void  arrayPrint(array_t* a, FILE* pFile) {
+
+    funcPrint_t* printear = getPrintFunction(a->type);
+    fprintf(pFile, "[");
+    for(int i = 0; i < a->size; i++){
+        printear(arrayGet(a, i), pFile);
+        if(i != (a->size-1))
+            fprintf(pFile, ",");
+    }
+    fprintf(pFile, "]");
+
 }
 
 /** Lista **/
@@ -66,13 +76,19 @@ void listAddLast(list_t* l, void* data){
     l->size++;
 }
 
+
+
+
 void listPrint(list_t* l, FILE* pFile) {
     funcPrint_t* printear = getPrintFunction(l->type);
     fprintf(pFile, "[");
-    for(int i = 0; i < l->size; i++){
-        printear(listGet(l, i), pFile);
-        if(i != (l->size-1))
-            fprintf(pFile, ", ");
+    if(l != NULL){
+        for(int i = 0; i < l->size; i++){
+            list_t* item = listGet(l, i);
+            printear(item, pFile);
+            if(i != (l->size-1))
+            fprintf(pFile, ",");
+        }
     }
     fprintf(pFile, "]");
 }

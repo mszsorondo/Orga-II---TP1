@@ -16,9 +16,15 @@ void test_cardNew();
 void test_strCmp();
 void test_cardCmpASuitGreaterEqualNum();
 void test_listNew();
+void test_listDelete_card();
+void test_cardAddStacked();
+void test_cardPrint();
+void test_listClone();
+void test_cardClone();
 void listAddLast(list_t* l, void*data);
-
-
+extern list_t* listClone(list_t* l);
+void test_cardAddStacked();
+void test_cardCmpEqualSuitEqualNum();
 int main (void){  
     //test_strClone();
     //test_strCmp();
@@ -50,14 +56,210 @@ int main (void){
     /*test_intPrint();
     test_intCmp();
     test_intClone();*/
-
-    test_arrayRemove();
+    //test_listClone();
+    //test_cardClone();
+    //test_arrayRemove();
     //test_arraySwap();
     //test_arrayNew();
     //test_arrayGetSize();
     //test_arrayAddLast();
+    //test_arrayPrint();
+
+    //test_cardAddStacked();
+    
+    //test_listDelete_card();
+    
+    test_cardPrint();
 }
 
+
+
+
+void test_listDelete_card(){
+    int32_t a = 7;
+    int32_t b = 2;
+    int32_t c = 1;
+
+
+    card_t * card1 = cardNew("basto", &a);
+    card_t * card2 = cardNew("copas", &b);
+    card_t* card3 = cardNew("espada", &c);
+
+    list_t* listaDeCards = listNew(3);
+
+    listAddFirst(listaDeCards, card1);
+    listAddFirst(listaDeCards, card2);
+    listAddFirst(listaDeCards, card3);
+
+
+    listDelete(listaDeCards);
+    cardDelete(card1);
+    cardDelete(card2);
+    cardDelete(card3);
+    
+}
+
+void test_cardPrint(){
+
+    FILE* pFile = fopen("prueba_cardPrint.txt", "w");
+
+    int32_t a = 2;
+    card_t* card1 = cardNew("espada", &a);
+    
+    int32_t b = 3;
+    card_t* card2 = cardNew("basto", &b);
+    
+    cardAddStacked(card1, card2);
+
+    cardPrint(card1, pFile);
+
+    cardDelete(card1);
+    cardDelete(card2);
+    fclose(pFile);
+}
+
+
+void test_cardClone(){
+    int32_t a = 2;
+    int32_t b = 3;
+    card_t* card1 = cardNew("espada", &a);
+    card_t* card2 = cardNew("bastos", &b);
+
+    card_t* card3 = cardClone(card2);
+    card_t* card4 = cardClone(card1);
+
+    printf("La carta 1 es un %d de %s\n", *card1->number, card1->suit);
+    printf("La carta 2 es un %d de %s\n", *card2->number, card2->suit);
+
+    printf("La carta 3 es un %d de %s\n", *card3->number, card3->suit);
+    printf("La carta 4 es un %d de %s\n", *card4->number, card4->suit);
+
+    cardDelete(card1);
+    cardDelete(card2);
+    cardDelete(card3);
+    cardDelete(card4);
+    
+}
+
+void test_cardAddStacked(){
+    int32_t a = 5;
+    int32_t c = 7;
+    int32_t b = 6;
+    card_t* card1 = cardNew("espada", &a);
+    card_t* card2 = cardNew("basto", &b);
+    card_t* card3 = cardNew("oro", &c);
+
+    cardAddStacked(card1, card2);
+    cardAddStacked(card1, card3);
+
+    //en este punto, card1 tiene una lista stacked, q solo contiene a card2
+
+    list_t* stacked = cardGetStacked(card1);
+
+    card_t* cardStacked = listGet(stacked, 1);
+
+    list_t* cartas = listNew(TypeCard);
+    listAddLast(cartas, card1);
+    listAddLast(cartas, card2);
+    listAddLast(cartas, card3);
+
+    //FILE *fp_cartas = fopen("cartas.txt", "w");
+
+    //listPrint(cartas, fp_cartas);
+
+    //fclose(fp_cartas);
+
+    printf("El palo de la carta stackeada es: %s, y el numero: %d \n", cardStacked->suit, *cardStacked->number);
+
+    listDelete(cartas);
+    cardDelete(card1);
+    cardDelete(card2);
+    cardDelete(card3);
+
+}
+
+void test_listClone(){
+    list_t* l1 = listNew(2);
+    listAddLast(l1, "hola");
+    listAddLast(l1, "chau");
+    listAddLast(l1, "baibai");
+
+    list_t* l1_cloned = listClone(l1);
+
+    for(int i = 0; i < l1->size; i++){
+        char* aux = listGet(l1, i);
+        printf("%s ", aux);
+    }
+    printf("\n");
+    printf("CLONADA \n");
+    for(int i = 0; i < l1_cloned->size; i++){
+        char* aux = listGet(l1_cloned, i);
+        printf("%s ", aux);
+    }
+    printf("\n");
+    
+    listDelete(l1);
+    listDelete(l1_cloned);
+}
+
+void test_arrayPrint(){
+    FILE* pFile = fopen("prueba_arrayPrint.txt", "a+");
+    array_t* arr1 = arrayNew(1,10);
+
+    int32_t numA = 36;
+    arrayAddLast(arr1, &numA);
+    int32_t numB = 35;
+    arrayAddLast(arr1, &numB);
+    int32_t numC = 33;
+    arrayAddLast(arr1, &numC);
+    int32_t numD = 32;
+    arrayAddLast(arr1, &numD);
+    int32_t numE = 31;
+    arrayAddLast(arr1, &numE);
+    int32_t numF = 34;
+    arrayAddLast(arr1, &numF);
+
+
+    arrayPrint(arr1, pFile);
+
+    arrayDelete(arr1);
+
+    fclose(pFile);
+}
+
+void test_arrayRemove(){
+    array_t* arr1 = arrayNew(1,10);
+    
+    int32_t fst = 88;
+    int32_t snd = 4;
+    int32_t trd = 8;
+    int32_t a = 9;
+    int32_t b = 10;
+    arrayAddLast(arr1, &fst);
+    arrayAddLast(arr1, &snd);
+    arrayAddLast(arr1, &trd);
+    arrayAddLast(arr1, &a);
+    arrayAddLast(arr1, &b);
+
+    for(int i = 0; i < arr1->size; i++){
+        int32_t* aux = arrayGet(arr1, i);
+        printf("%d ", *aux);
+    }
+    printf("\n");
+
+    int32_t* eliminado = arrayRemove(arr1, -100);
+
+    for(int i = 0; i < arr1->size; i++){
+        int32_t* aux = arrayGet(arr1, i);
+        printf("%d ", *aux);
+    }
+
+    printf("Se eliminó el elemento: %d", *eliminado);
+    arrayDelete(arr1);
+    intDelete(eliminado);
+
+
+}
 
 void test_arraySwap(){
     array_t* arr1 = arrayNew(1,10);
@@ -135,9 +337,9 @@ void test_arrayAddLast(){
 
     printf("El tamanio del array es: %d \n",arrayGetSize(strArr));
 
-    printf("Quien es mati? %s\n", arrayGet(strArr,0));
+    printf("Quien es mati? %s\n", (char*)arrayGet(strArr,0));
 
-    printf("Somos %s\n", arrayGet(strArr,1));
+    printf("Somos %s\n", (char*)arrayGet(strArr,1));
 
     arrayDelete(strArr);
 
@@ -187,6 +389,7 @@ void test_listPrint(){
 
     listDelete(listaA);
 
+    printf("CAACAGSAGSAH");
     fclose(pFile);
 }
 
@@ -339,7 +542,7 @@ void test_listAddFirst(){
 
     listAddFirst(listaB, stringTest);
 
-    printf("El tamaño de la lista es %d y su primer elemento es: %s \n", listaB->size, listaB->first->data);
+    printf("El tamaño de la lista es %d y su primer elemento es: %s \n", listaB->size, (char*)listaB->first->data);
 
     listDelete(listaB);
 
@@ -453,7 +656,7 @@ void test_intClone(){
 
     int32_t* resultado = intClone(&a);
 
-    printf("La dirección reservada es: %p y su valor es: %d\n", resultado, *resultado);
+    printf("La dirección reservada es: %ls y su valor es: %d\n", resultado, *resultado);
 
     intDelete(resultado);
 
