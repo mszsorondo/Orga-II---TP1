@@ -365,31 +365,14 @@ void test_arrayNew(){
 }
 
 void test_listPrint(){
-    FILE* pFile = fopen("prueba_listPrint.txt", "a+");
+    FILE* pFile = fopen("prueba_listPrint.txt", "w");
     int32_t numA = 36;
     list_t* listaA = listNew(1);
-    listAddFirst(listaA, &numA);
-
-    int32_t numB = 4;
-    listAddFirst(listaA, &numB);
-
-    int32_t numC = 299;
-    listAddFirst(listaA, &numC);
-
-    int32_t numX = 349;
-    listAddFirst(listaA, &numX);
-
-    int32_t numD = 292;
-    listAddFirst(listaA, &numD);
-
-    int32_t numE = 290;
-    listAddFirst(listaA, &numE);
 
     listPrint(listaA, pFile);
 
     listDelete(listaA);
 
-    printf("CAACAGSAGSAH");
     fclose(pFile);
 }
 

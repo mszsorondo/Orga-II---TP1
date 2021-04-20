@@ -76,15 +76,29 @@ void listAddLast(list_t* l, void* data){
     l->size++;
 }
 
-
-
+/*void listPrint(list_t *l, FILE *pFile)
+{
+    fprintf(pFile, "[");
+    if (l != NULL)
+    {
+        for (uint8_t i = 0; i < l->size; i++)
+        {
+            void *item = listGet(l, i);
+            funcPrint_t *func = getPrintFunction(l->type);
+            func(item, pFile);
+            if (i != l->size - 1)
+                fprintf(pFile, ",");
+        }
+    }
+    fprintf(pFile, "]");
+}*/
 
 void listPrint(list_t* l, FILE* pFile) {
-    funcPrint_t* printear = getPrintFunction(l->type);
     fprintf(pFile, "[");
     if(l != NULL){
-        for(int i = 0; i < l->size; i++){
-            list_t* item = listGet(l, i);
+        for(uint8_t i = 0; i < l->size; i++){
+            funcPrint_t *printear = getPrintFunction(l->type);
+            void* item = listGet(l, i);
             printear(item, pFile);
             if(i != (l->size-1))
             fprintf(pFile, ",");

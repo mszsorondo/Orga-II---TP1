@@ -21,7 +21,7 @@ intCmp(-20,0) --> 1
 Clonar
 
 7 - Omega 4
-0 - 
+0 - NULL
 
 Comparar
 
@@ -273,7 +273,7 @@ dd
 Quitar
 
 2 - [bb,dd] - aa
-2 - [bb,dd] - ê/
+2 - [bb,dd] - –?
 1 - [dd] - bb
 
 Swap
@@ -324,35 +324,35 @@ Quitar de mas
 
 34 - [aa,bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh]
 33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - aa
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê/
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ‡«	
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ∞∏
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - Ä
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - P(
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] -  `
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ó
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ¿œ
-33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - –?
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] -  ÿ	
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - »
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ¿
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê8
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - `p
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 0®
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 
+33 - [bb,dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - –
 32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - bb
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ‡«	
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ∞∏
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - Ä
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - P(
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] -  `
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ó
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ¿œ
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê
-32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - `?
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] -  ÿ	
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - »
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ¿
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê8
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - `p
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 0®
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - –
+32 - [dd,dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - †O
 31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - dd
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ∞∏
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - Ä
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - P(
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] -  `
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ó
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ¿œ
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - `?
-31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 0w
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - »
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ¿
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - ê8
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - `p
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 0®
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - 
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - –
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - †O
+31 - [dd,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - pá
 30 - [aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - dd
 29 - [bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - aa
 28 - [dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh,aa,bb,dd,ff,00,zz,cc,ee,gg,hh] - bb

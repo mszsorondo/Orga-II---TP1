@@ -42,6 +42,9 @@ formato_5: db '}', 0
 formato_6: db "{",0
 formato_7: db "-",0
 formato_8: db "}",0
+formato_9: db "[]", 0
+
+formato_10: db "NULL", 0
 
 section .text
 extern malloc
@@ -250,13 +253,33 @@ ret
 strPrint:
     PUSH RBP
     MOV RBP, RSP
+    push r12
+    push r13
     ;a esta en rdi, pfile en rsi
 
-    mov rdx, rdi
-    mov rdi, rsi
+    mov r12, rdi
+    mov r13, rsi
+
+    call strLen
+    cmp rax, 0
+    je .vacia
+
+    mov rax, 0
+    mov rdx, r12
+    mov rdi, r13
     mov rsi, formato_2 
     call fprintf
+    jmp .fin
 
+    .vacia:
+    mov rax, 0
+    mov rdi, r13
+    mov rsi, formato_10
+    call fprintf
+
+    .fin:
+    pop r13
+    pop r12
     POP RBP
 ret
 
@@ -535,24 +558,18 @@ mov rdi, [rdi] ;obtengo el tipo
 call getDeleteFunction ;obtengo la funcion q borra al tipo
 mov r12, rax ;la preservo
 
-
-
 mov r9, [r13+8] ;obtengo el puntero al arreglo de punteros
+mov r14, 0
 mov r14b, byte [r13+4] ;obtengo el size
-dec r14 ;lo hago valido para recorrer
-
-
-
 
 mov rcx, 0 ;inicio contador
 .ciclo:
     cmp cl, r14b ;comparo el contador contra posiciones validas
-    JG .fin ;de no ser asi, finaliza
+    jge .fin ;de no ser asi, finaliza
 
-    lea rdi, [r9+rcx*8]
-    mov rdi, [rdi] ;paso a rdi el puntero al valor
+    lea rdi, [r9 + rcx*8]
+    ;mov rdi, [rdi] ;paso a rdi el puntero al valor
     call r12      ;lo limpio
-
 
     inc cl       ;inc el contador
     jmp .ciclo    ;loop
@@ -710,6 +727,12 @@ ret
 listRemove:
 push rbp
 mov rbp, rsp
+push r12
+push r13
+push r14
+push r15
+push rbx
+sub rsp, 8
 
 ;list en rdi
 ;i en rsi
@@ -800,6 +823,12 @@ call free
 mov rax, r15
 
 .fin:
+add rsp, 8
+pop rbx
+pop r15
+pop r14
+pop r13
+pop r12
 pop rbp
 ret
 
@@ -968,7 +997,6 @@ cardNew:
     push r13
     push r14
     push r15
-    sub rsp, 8
 
     mov r12, rdi
     mov r13, rsi
@@ -987,7 +1015,6 @@ cardNew:
     mov [rax+8], r15
     mov qword [rax+16], 0
 
-    add rsp, 8
     pop r15
     pop r14
     pop r13
@@ -1123,6 +1150,7 @@ cardDelete:
     PUSH RBP
     MOV RBP, RSP
     PUSH r12
+    sub rsp, 8
     ;RDI PUNTERO A CARD
 
     mov r12, rdi
@@ -1141,6 +1169,9 @@ cardDelete:
 
     mov rdi, r12
     call free
+
+    add rsp, 8
+    pop r12
     POP RBP
 
 ret
@@ -1182,6 +1213,7 @@ cardPrint:
     call fprintf
 
     mov rax, 0
+
     mov rdi, [r12 + 16]
     mov rsi, r13
     call listPrint
@@ -1190,7 +1222,7 @@ cardPrint:
     mov rdi, r13
     mov rsi, formato_8
     call fprintf
-
+.fin:
     add rsp, 8
     pop r13
     pop r12
